@@ -50,6 +50,27 @@ app = create_app(
 )
 
 
+@app.get("/")
+def root() -> dict:
+    """Root endpoint - friendly landing for HF Space browser visits."""
+    return {
+        "name": "Support Triage OpenEnv",
+        "status": "ok",
+        "version": "1.0.0",
+        "endpoints": {
+            "health": "/health",
+            "reset": "POST /reset",
+            "step": "POST /step",
+            "state": "/state",
+            "schema": "/schema",
+            "websocket": "/ws",
+        },
+        "tasks": ["easy", "medium", "hard"],
+        "tickets_per_task": 15,
+        "reward_bounds": "(0.05, 0.90) strict",
+    }
+
+
 def main(host: str = "0.0.0.0", port: int = 8000) -> None:
     """Entry point referenced by [project.scripts] in pyproject.toml."""
     import uvicorn
