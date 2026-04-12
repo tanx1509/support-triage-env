@@ -1,0 +1,14 @@
+spec_version: 1
+name: triage
+type: environment
+description: Customer support ticket triage with 3 difficulty tasks and adversarial test cases
+version: 1.0.0
+
+runtime:
+  python: ">=3.10"
+
+app:
+  module: server.app
+  attribute: app
+
+port: 8000
