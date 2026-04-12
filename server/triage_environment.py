@@ -145,7 +145,7 @@ class TriageEnvironment(Environment):
             customer_tier = t.get("customer_tier", "standard")
 
         mean_reward = (
-            sum(self._rewards) / len(self._rewards) if self._rewards else 0.0
+            clamp_task_score(sum(self._rewards) / len(self._rewards)) if self._rewards else 0.05
         )
 
         return TriageObservation(
