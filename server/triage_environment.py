@@ -82,7 +82,7 @@ class TriageEnvironment(Environment):
         self._last_feedback = ""
         self._done = False
 
-        return self._observe(reward=0.0)
+        return self._observe(reward=0.05)
 
     def step(self, action: TriageAction) -> TriageObservation:  # type: ignore[override]
         """
@@ -96,9 +96,7 @@ class TriageEnvironment(Environment):
             (or done=True if the episode is finished).
         """
         if self._done:
-            # Defensive: if the agent calls step on a done episode, return
-            # a terminal observation rather than crashing.
-            return self._observe(reward=0.0)
+            return self._observe(reward=0.05)
 
         current = self._tickets[self._idx]
         gold = current["gold"]
