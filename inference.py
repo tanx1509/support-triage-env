@@ -132,6 +132,24 @@ def parse_action(raw: str) -> Dict[str, Any]:
     }
 
 
+def unwrap(resp_json: Dict[str, Any]) -> Dict[str, Any]:
+    """Flatten the {observation: {...}, reward: x, done: y} envelope.
+
+    OpenEnv's create_app wraps responses in an outer envelope; the
+    inference loop wants a single flat dict with both observation
+    fields AND reward/done at the top level.
+    """
+    if not isinstance(resp_json, dict):
+        return {}
+    inner = resp_json.get("observation") or {}
+    flat = dict(inner)
+    if "reward" in resp_json:
+        flat["reward"] = resp_json["reward"]
+    if "done" in resp_json:
+        flat["done"] = resp_json["done"]
+    return flat
+
+
 def call_llm(client: OpenAI, obs: Dict[str, Any]) -> Dict[str, Any]:
     user_msg = (
         f"Allowed categories: {obs.get('allowed_categories')}\n"
@@ -167,14 +185,14 @@ def run_task(client: OpenAI, task: str) -> float:
         timeout=15,
     )
     r.raise_for_status()
-    obs = r.json()
+    obs = unwrap(r.json())
 
     total = obs.get("total_tickets", 0)
     log_start(task, total)
 
     idx = 0
     while not obs.get("done", False):
-        ticket_id = obs.get("ticket_id", "?")
+        ticket_id = obs.get("ticket_id", "?") or "?"
         action = call_llm(client, obs)
 
         r = requests.post(
@@ -183,7 +201,7 @@ def run_task(client: OpenAI, task: str) -> float:
             timeout=30,
         )
         r.raise_for_status()
-        obs = r.json()
+        obs = unwrap(r.json())
 
         log_step(
             task=task,
