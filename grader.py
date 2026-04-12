@@ -36,7 +36,7 @@ except ImportError:
 # Reward bounds - HARD invariants
 # ---------------------------------------------------------------------------
 REWARD_FLOOR = 0.05  # minimum reward for any non-empty action
-REWARD_CEILING = 0.95  # maximum reward even for perfect actions
+REWARD_CEILING = 0.90  # maximum reward even for perfect actions (tighter for stronger signal)
 
 CATEGORY_WEIGHT = 0.40
 PRIORITY_WEIGHT = 0.30

@@ -278,12 +278,14 @@ MEDIUM_TICKETS: List[Dict[str, Any]] = [
 # struggle to exceed ~0.80 average reward.
 # ---------------------------------------------------------------------------
 HARD_TICKETS: List[Dict[str, Any]] = [
+    # NUCLEAR: false-flag urgency - sounds critical but is actually a polite
+    # nudge from a happy customer asking about an old, already-resolved bug.
     {
         "id": "H001",
-        "subject": "URGENT: production down + billing question",
-        "body": "Our entire team cannot access the API since 2am. We are on the enterprise plan. Also, while I have you, can you confirm our next invoice date? This outage is costing us money every minute.",
+        "subject": "Re: incident from last month",
+        "body": "Hey team, hope you are well! Just following up on that database hiccup from 3 weeks ago - your engineer Sara already fixed it and sent us a postmortem, which was great. I am writing because our compliance officer needs the postmortem PDF in a specific format for our SOC2 audit. Could someone resend it as PDF instead of the Notion link? No rush, just for our records. Thanks!",
         "customer_tier": "enterprise",
-        "gold": {"category": "technical_issue", "priority": "urgent", "team": "engineering"},
+        "gold": {"category": "general_inquiry", "priority": "low", "team": "customer_success"},
     },
     # Sarcastic: appears positive but is actually a complaint demanding a refund.
     {
@@ -300,13 +302,14 @@ HARD_TICKETS: List[Dict[str, Any]] = [
         "customer_tier": "standard",
         "gold": {"category": "account_access", "priority": "urgent", "team": "account_security"},
     },
-    # Cry-wolf: subject says "URGENT" but content is a low-priority feature request.
+    # Brutal: looks like a polite product feedback, actually a paying customer
+    # whose 2FA is broken (security + billing impact). Tone hides the severity.
     {
         "id": "H004",
-        "subject": "URGENT URGENT URGENT",
-        "body": "Please please please add a way to change the font color in the editor. I have been waiting forever for this. Truly the most important thing right now for my workflow.",
-        "customer_tier": "standard",
-        "gold": {"category": "feature_request", "priority": "low", "team": "product"},
+        "subject": "Some thoughts on your auth flow",
+        "body": "Hey team, love the product overall. Wanted to share some constructive feedback - the 2FA implementation seems to silently fail when you use authenticator apps with time drift. I have been locked out of my admin account for 2 days now, missed our compliance audit deadline. Anyway just wanted to flag in case it helps. We are on the enterprise plan if that matters.",
+        "customer_tier": "enterprise",
+        "gold": {"category": "account_access", "priority": "urgent", "team": "account_security"},
     },
     # Subject hides severity, body reveals critical security issue.
     {
@@ -318,20 +321,23 @@ HARD_TICKETS: List[Dict[str, Any]] = [
     },
     # Stack trace embedded; technical but also has billing complaint.
     # Gold focuses on the production-blocking bug.
+    # NUCLEAR: looks like simple feedback. Body buried with GDPR right-to-erasure
+    # request which is legally time-bound (30 days, fines if missed). Security/legal urgency.
     {
         "id": "H006",
-        "subject": "Re: Re: Re: bug not fixed",
-        "body": "Still seeing this on production:\n\nTraceback (most recent call last):\n  File 'app.py', line 42, in process\n    result = sdk.compute(payload)\n  TimeoutError: deadline exceeded after 30s\n\nThis has been broken for 3 weeks. Also you charged me twice this month but the bug is more important right now.",
-        "customer_tier": "enterprise",
-        "gold": {"category": "technical_issue", "priority": "urgent", "team": "engineering"},
+        "subject": "Some quick feedback on your onboarding",
+        "body": "Hi! Loved trying your product over the last 2 weeks. The onboarding could be smoother (took me 4 attempts to verify my email). Anyway, I have decided not to continue, so under GDPR Article 17 I am formally requesting deletion of all my personal data and any derived data within the 30-day statutory window. My account email is on file. Please confirm completion in writing for my records. Thanks!",
+        "customer_tier": "standard",
+        "gold": {"category": "account_access", "priority": "high", "team": "account_security"},
     },
-    # Passive-aggressive but the actual ask is a feature request.
+    # Brutal: ticket TELLS you the wrong category in the body to test if
+    # the agent thinks for itself. Actual issue is a refund (canceled by mistake).
     {
         "id": "H007",
-        "subject": "I guess this is fine",
-        "body": "So apparently every other tool in this category has bulk operations except yours. Cool. Anyway, just wanted to formally request bulk delete since asking nicely in the forum did nothing for 6 months.",
+        "subject": "Technical bug to report",
+        "body": "Hi support team, I want to report this as a TECHNICAL ISSUE so it gets routed to engineering quickly. Here is what happened: I clicked the cancel button on my subscription thinking it was the pause button. Now I cannot get back in and I have already been charged for next month. Please reverse the charge and reactivate my account. The bug is that the cancel button looks like the pause button.",
         "customer_tier": "premium",
-        "gold": {"category": "feature_request", "priority": "medium", "team": "product"},
+        "gold": {"category": "refund", "priority": "high", "team": "customer_success"},
     },
     # Customer-tier-aware: enterprise customer mentioning churn = high priority.
     {
@@ -341,7 +347,6 @@ HARD_TICKETS: List[Dict[str, Any]] = [
         "customer_tier": "enterprise",
         "gold": {"category": "general_inquiry", "priority": "urgent", "team": "customer_success"},
     },
-    # Ambiguous: looks like shipping but actually billing dispute.
     {
         "id": "H009",
         "subject": "Order #99821",
@@ -349,21 +354,23 @@ HARD_TICKETS: List[Dict[str, Any]] = [
         "customer_tier": "standard",
         "gold": {"category": "account_access", "priority": "urgent", "team": "account_security"},
     },
-    # Looks low priority due to tone, actually a security issue.
+    # Brutal: customer asks "is this a bug" but actually describes account
+    # takeover. Tone is curious, not alarmed. Contains a stack trace red herring.
     {
         "id": "H010",
-        "subject": "Minor thing maybe",
-        "body": "Probably nothing but I just got a Slack notification for a workspace I left 2 years ago. Your system still has me as a member apparently. Felt weird, thought I would mention it.",
-        "customer_tier": "standard",
-        "gold": {"category": "account_access", "priority": "medium", "team": "account_security"},
+        "subject": "Is this a bug?",
+        "body": "Quick one - I just got 14 password reset emails in the last 5 minutes. None of them were initiated by me. Login still works fine. Saw this in browser console:\n\nTypeError: Cannot read property uid of undefined\n  at handleAuth (auth.js:142)\n\nProbably unrelated. Should I be worried?",
+        "customer_tier": "premium",
+        "gold": {"category": "account_access", "priority": "urgent", "team": "account_security"},
     },
-    # Multi-language fragment, real intent is billing.
+    # Brutal: appears to be a billing complaint but is actually a phishing
+    # report. The customer never made the charge - someone else did. Security.
     {
         "id": "H011",
-        "subject": "Problema con la cuenta",
-        "body": "Hola, me cobraron dos veces este mes. I see two charges on my statement of $59 each. Por favor refund one of them. Gracias.",
+        "subject": "Charge I do not recognize",
+        "body": "Hi, I see a charge of $299 on my card from your company. I have an account with you but I am on the FREE plan and never upgraded. I checked my account and it still shows free tier. The charge happened while I was on a flight with my phone in airplane mode. Please investigate and refund. Also worried someone has my card details.",
         "customer_tier": "standard",
-        "gold": {"category": "billing", "priority": "high", "team": "billing_team"},
+        "gold": {"category": "account_access", "priority": "urgent", "team": "account_security"},
     },
     # Looks like feature request but is actually about a broken feature.
     {
@@ -373,23 +380,25 @@ HARD_TICKETS: List[Dict[str, Any]] = [
         "customer_tier": "premium",
         "gold": {"category": "technical_issue", "priority": "high", "team": "engineering"},
     },
-    # Polite framing, actually a critical shipping escalation.
+    # NUCLEAR: looks like a casual team-internal note. Body buried with the fact
+    # that another company's data is appearing in this customer's exports - massive
+    # multi-tenant data leak. Reads like routine support but is a P0 security incident.
     {
         "id": "H013",
-        "subject": "Whenever you have a moment",
-        "body": "No rush at all but my surgical equipment shipment was supposed to arrive Monday for a procedure scheduled Wednesday. It is now Tuesday evening. The hospital needs this item or we have to reschedule.",
-        "customer_tier": "enterprise",
-        "gold": {"category": "shipping", "priority": "urgent", "team": "logistics"},
+        "subject": "Small thing - export filename typo",
+        "body": "Heads up team, when I export my dashboard data the filename has an underscore where I think a hyphen would look nicer (export_2026.csv vs export-2026.csv). Minor nit. Oh also unrelated, the export this morning had ~200 rows from what looks like a different company at the bottom (saw user emails with @acme.com domain, we are @ourcompany.com). Probably just a UI bug? Not blocking, file looks fine otherwise.",
+        "customer_tier": "premium",
+        "gold": {"category": "technical_issue", "priority": "urgent", "team": "engineering"},
     },
-    # General inquiry that looks like complaint.
+    # Brutal: looks like rage about features but is actually a churn-risk
+    # enterprise customer asking for a sales/CSM call disguised as feature complaint.
     {
         "id": "H014",
-        "subject": "Why is this so hard",
-        "body": "Honestly just trying to figure out where to find the option to change my notification frequency. Spent 20 minutes clicking around. Help?",
-        "customer_tier": "standard",
-        "gold": {"category": "general_inquiry", "priority": "low", "team": "customer_success"},
+        "subject": "This is not working for us",
+        "body": "We have been using your platform for 18 months. Honestly the last 3 months have been increasingly frustrating - features we asked for never ship, our usage is hitting limits we did not know existed, and our team is openly comparing alternatives. Our renewal is in 6 weeks. I do not want to write a long ticket explaining everything. Can someone senior actually call us this week? We are an enterprise account and we need a real conversation, not a support ticket.",
+        "customer_tier": "enterprise",
+        "gold": {"category": "general_inquiry", "priority": "urgent", "team": "customer_success"},
     },
-    # Refund disguised as technical issue.
     {
         "id": "H015",
         "subject": "Bug in checkout flow",
